@@ -18,22 +18,22 @@ function createMatrix(w, h) {
 function createPiece(type) {
     if (type === 'I') {
         return [
-            [0, 0, 0, 0],
-            [1, 1, 1, 1],
-            [0, 0, 0, 0],
-            [0, 0, 0, 0],
+            [0, 1, 0, 0],
+            [0, 1, 0, 0],
+            [0, 1, 0, 0],
+            [0, 1, 0, 0],
         ];
     } else if (type === 'L') {
         return [
             [0, 0, 1],
-            [1, 0, 0],
-            [1, 0, 0],
+            [0, 0, 1],
+            [1, 1, 1],
         ];
     } else if (type === 'J') {
         return [
-            [0, 0, 1],
-            [0, 0, 1],
-            [1, 1, 0],
+            [1, 0, 0],
+            [1, 0, 0],
+            [1, 1, 1],
         ];
     } else if (type === 'O') {
         return [
@@ -42,20 +42,20 @@ function createPiece(type) {
         ];
     } else if (type === 'Z') {
         return [
-            [1, 0, 0],
+            [1, 1, 0],
             [0, 1, 0],
-            [0, 0, 1],
+            [0, 1, 1],
         ];
     } else if (type === 'S') {
         return [
-            [0, 0, 1],
+            [0, 1, 1],
             [0, 1, 0],
-            [0, 1, 0],
+            [1, 1, 0],
         ];
     } else if (type === 'T') {
         return [
             [0, 1, 0],
-            [1, 1, 0],
+            [1, 1, 1],
             [0, 1, 0],
         ];
     }
@@ -284,6 +284,14 @@ document.getElementById('rotate').addEventListener('click', () => {
     }
 });
 
+document.getElementById('up').addEventListener('click', () => {
+    if (player.isSnake) {
+        const directions = [{x: 0, y: 1}, {x: 1, y: 0}, {x: 0, y: -1}, {x: -1, y: 0}];
+        const idx = directions.findIndex(d => d.x === player.snake.dir.x && d.y === player.snake.dir.y);
+        player.snake.dir = directions[(idx + 2) % directions.length];
+    }
+});
+
 document.getElementById('left').addEventListener('click', () => {
     if (player.isSnake) {
         const directions = [{x: 0, y: 1}, {x: 1, y: 0}, {x: 0, y: -1}, {x: -1, y: 0}];
@@ -305,7 +313,11 @@ document.getElementById('right').addEventListener('click', () => {
 });
 
 document.getElementById('down').addEventListener('click', () => {
-    if (!player.isSnake) {
+    if (player.isSnake) {
+        const directions = [{x: 0, y: 1}, {x: 1, y: 0}, {x: 0, y: -1}, {x: -1, y: 0}];
+        const idx = directions.findIndex(d => d.x === player.snake.dir.x && d.y === player.snake.dir.y);
+        player.snake.dir = directions[(idx + 1) % directions.length];
+    } else if (!player.isSnake) {
         playerDrop();
     }
 });
