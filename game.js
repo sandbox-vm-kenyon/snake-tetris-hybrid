@@ -155,7 +155,7 @@ function playerReset() {
         player.piecesSinceSnake++;
     }
 
-    if (collide(arena, player)) {
+    if (!player.isSnake && collide(arena, player)) {
         arena.forEach(row => row.fill(0));
         player.score = 0;
         updateScore();
