@@ -332,6 +332,18 @@ document.getElementById('down').addEventListener('click', () => {
     }
 });
 
+document.addEventListener('keydown', event => {
+    if (event.keyCode === 37) { // Left
+        document.getElementById('left').click();
+    } else if (event.keyCode === 39) { // Right
+        document.getElementById('right').click();
+    } else if (event.keyCode === 40) { // Down
+        document.getElementById('down').click();
+    } else if (event.keyCode === 38) { // Up
+        document.getElementById('up').click();
+    }
+});
+
 playerReset();
 updateScore();
 update();
