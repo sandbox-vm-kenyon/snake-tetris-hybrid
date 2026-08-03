@@ -382,17 +382,17 @@ function handleSnakeDirectionalInput(keyCode) {
     if (!newDir) return;
 
     const currentDir = player.snake.dir;
-    // Ignore if same direction
-    if (newDir.x === currentDir.x && newDir.y === currentDir.y) return;
-    // Ignore if 180-degree reversal
-    if (newDir.x === -currentDir.x && newDir.y === -currentDir.y) return;
-
+    
     // Map the requested direction to a rotation step
     const currentIdx = SNAKE_DIRECTIONS.findIndex(d => d.x === currentDir.x && d.y === currentDir.y);
     const newIdx = SNAKE_DIRECTIONS.findIndex(d => d.x === newDir.x && d.y === newDir.y);
     
+    if (currentIdx === -1 || newIdx === -1) return;
+
     let step = newIdx - currentIdx;
     if (step < 0) step += 4;
+
+    if (step === 0) return; // Ignore if same direction
 
     rotateSnake(step);
 }
@@ -408,7 +408,7 @@ function handleSnakeDirectionalInput(keyCode) {
 // turns around. The queue is capped so mashing can't build up a long backlog.
 function rotateSnake(step) {
     if (!player.isSnake || !player.snake) return;
-    if (player.snake.rotationQueue.length < 2) {
+    if (player.snake.rotationQueue.length < 3) {
         player.snake.rotationQueue.push(step);
     }
 }
@@ -452,21 +452,25 @@ document.getElementById('rotate-left').addEventListener('click', () => {
 });
 
 document.getElementById('left').addEventListener('click', () => {
-    if (!player.isSnake) {
+    if (player.isSnake) {
+        handleSnakeDirectionalInput(37);
+    } else if (!player.isSnake) {
         playerMove(-1);
     }
 });
 
 document.getElementById('right').addEventListener('click', () => {
-    if (!player.isSnake) {
+    if (player.isSnake) {
+        handleSnakeDirectionalInput(39);
+    } else if (!player.isSnake) {
         playerMove(1);
     }
 });
 
 document.getElementById('down').addEventListener('click', () => {
-    // Not while a snake is being steered, and not for the uncontrollable
-    // snake-become-falling-piece (the player must not control its descent).
-    if (!player.isSnake && !player.isFallingSnake) {
+    if (player.isSnake) {
+        handleSnakeDirectionalInput(40);
+    } else if (!player.isSnake && !player.isFallingSnake) {
         playerDrop();
     }
 });
