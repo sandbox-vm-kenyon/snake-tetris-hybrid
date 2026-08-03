@@ -298,6 +298,9 @@ function draw() {
         context.fillStyle = 'green';
         player.snake.body.forEach((seg, index) => {
             context.fillRect(seg.x, seg.y, 1, 1);
+            context.strokeStyle = 'black';
+            context.lineWidth = 0.1;
+            context.strokeRect(seg.x, seg.y, 1, 1);
             if (index === 0) {
                 context.fillStyle = 'black';
                 const eyeSize = 0.15;
@@ -350,6 +353,9 @@ function drawMatrixNext(matrix, offset) {
             if (value !== 0) {
                 nextContext.fillStyle = 'red';
                 nextContext.fillRect(x + offset.x, y + offset.y, 1, 1);
+                nextContext.strokeStyle = 'black';
+                nextContext.lineWidth = 0.1;
+                nextContext.strokeRect(x + offset.x, y + offset.y, 1, 1);
             }
         });
     });
@@ -361,6 +367,9 @@ function drawMatrix(matrix, offset) {
             if (value !== 0) {
                 context.fillStyle = 'red';
                 context.fillRect(x + offset.x, y + offset.y, 1, 1);
+                context.strokeStyle = 'black';
+                context.lineWidth = 0.1;
+                context.strokeRect(x + offset.x, y + offset.y, 1, 1);
             }
         });
     });
