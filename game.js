@@ -219,8 +219,32 @@ function draw() {
     
     if (player.isSnake) {
         context.fillStyle = 'green';
-        player.snake.body.forEach(seg => {
+        player.snake.body.forEach((seg, index) => {
             context.fillRect(seg.x, seg.y, 1, 1);
+            if (index === 0) {
+                context.fillStyle = 'black';
+                const eyeSize = 0.15;
+                const eyeOffset = 0.2;
+                const dir = player.snake.dir;
+                
+                let x1, y1, x2, y2;
+                if (dir.x === 0 && dir.y === 1) {
+                    x1 = seg.x + eyeOffset; y1 = seg.y + eyeOffset;
+                    x2 = seg.x + 1 - eyeOffset; y2 = seg.y + eyeOffset;
+                } else if (dir.x === 0 && dir.y === -1) {
+                    x1 = seg.x + eyeOffset; y1 = seg.y + 1 - eyeOffset;
+                    x2 = seg.x + 1 - eyeOffset; y2 = seg.y + 1 - eyeOffset;
+                } else if (dir.x === 1 && dir.y === 0) {
+                    x1 = seg.x + 1 - eyeOffset; y1 = seg.y + eyeOffset;
+                    x2 = seg.x + 1 - eyeOffset; y2 = seg.y + 1 - eyeOffset;
+                } else if (dir.x === -1 && dir.y === 0) {
+                    x1 = seg.x + eyeOffset; y1 = seg.y + eyeOffset;
+                    x2 = seg.x + eyeOffset; y2 = seg.y + 1 - eyeOffset;
+                }
+                context.fillRect(x1, y1, eyeSize, eyeSize);
+                context.fillRect(x2, y2, eyeSize, eyeSize);
+                context.fillStyle = 'green';
+            }
         });
     } else {
         drawMatrix(player.matrix, player.pos);
