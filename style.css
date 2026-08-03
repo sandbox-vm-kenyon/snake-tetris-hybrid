@@ -47,21 +47,40 @@ canvas {
 }
 
 .d-pad {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0;
-}
-
-.d-pad-up {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 5px;
-}
-
-.d-pad-mid {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(3, 60px);
+    grid-template-rows: repeat(3, 60px);
     gap: 5px;
+    justify-content: center;
+}
+
+.d-pad-row {
+    display: contents;
+}
+
+.d-pad-btn {
+    width: 60px;
+    height: 60px;
+}
+
+#up {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+#left {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+#down {
+    grid-column: 2;
+    grid-row: 2;
+}
+
+#right {
+    grid-column: 3;
+    grid-row: 2;
 }
 
 .rotate-buttons {
