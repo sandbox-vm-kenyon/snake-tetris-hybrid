@@ -164,11 +164,13 @@ function playerReset() {
 
 function spawnSnake() {
     player.isSnake = true;
+    // Head points DOWN and leads the descent, so body[0] (the head, where the
+    // eyes render) is the LOWEST segment and the tail trails above it.
     player.snake = {
-        body: [{x: 5, y: 0}, {x: 5, y: 1}, {x: 5, y: 2}],
+        body: [{x: 5, y: 2}, {x: 5, y: 1}, {x: 5, y: 0}],
         dir: {x: 0, y: 1}
     };
-    player.matrix = [[0]]; 
+    player.matrix = [[0]];
 }
 
 function updateSnake() {
@@ -176,26 +178,32 @@ function updateSnake() {
 
     const head = {x: player.snake.body[0].x + player.snake.dir.x, y: player.snake.body[0].y + player.snake.dir.y};
 
+    // Death ONLY on the three fatal conditions: side walls or the ceiling.
     if (head.x < 0 || head.x >= arena[0].length || head.y < 0) {
         gameOver();
         return;
     }
 
-    // Check for self-collision
-    for (let i = 1; i < player.snake.body.length; i++) {
-        if (head.x === player.snake.body[i].x && head.y === player.snake.body[i].y) {
-            gameOver();
-            return;
-        }
-    }
-
+    // Landing on a landed block or the floor is NOT death — it locks the snake
+    // in as snake blocks (hybrid rule), so handle that before self-collision.
     if (head.y >= arena.length || (arena[head.y] && arena[head.y][head.x] !== 0)) {
         solidifySnake();
         return;
     }
 
-    player.snake.body.unshift(head);
-    player.snake.body.pop();
+    // Self-collision death is checked against the body the snake will actually
+    // occupy after the move (tail vacated). The immediate neck segment the head
+    // is leaving is excluded, so reversing/rotating the head direction multiple
+    // times in a row never triggers a false game-over.
+    const newBody = [head, ...player.snake.body.slice(0, player.snake.body.length - 1)];
+    for (let i = 1; i < newBody.length; i++) {
+        if (head.x === newBody[i].x && head.y === newBody[i].y) {
+            gameOver();
+            return;
+        }
+    }
+
+    player.snake.body = newBody;
 }
 
 function solidifySnake() {
@@ -306,11 +314,23 @@ function update(time = 0) {
     requestAnimationFrame(update);
 }
 
+// Turn the snake's heading by 90 degrees. `step` is +1 for clockwise (right)
+// and +3 (i.e. -1) for counter-clockwise (left). A turn that would flip the
+// head a full 180 degrees into its own neck is rejected — that lets the player
+// rotate repeatedly without ever triggering a false self-collision game-over.
+function rotateSnake(step) {
+    const directions = [{x: 0, y: 1}, {x: 1, y: 0}, {x: 0, y: -1}, {x: -1, y: 0}];
+    const idx = directions.findIndex(d => d.x === player.snake.dir.x && d.y === player.snake.dir.y);
+    const next = directions[(idx + step) % directions.length];
+    if (next.x === -player.snake.dir.x && next.y === -player.snake.dir.y) {
+        return; // ignore a direct reversal
+    }
+    player.snake.dir = next;
+}
+
 document.getElementById('rotate-right').addEventListener('click', () => {
     if (player.isSnake) {
-        const directions = [{x: 0, y: 1}, {x: 1, y: 0}, {x: 0, y: -1}, {x: -1, y: 0}];
-        const idx = directions.findIndex(d => d.x === player.snake.dir.x && d.y === player.snake.dir.y);
-        player.snake.dir = directions[(idx + 1) % directions.length];
+        rotateSnake(1);
     } else {
         playerRotate();
     }
@@ -318,16 +338,10 @@ document.getElementById('rotate-right').addEventListener('click', () => {
 
 document.getElementById('rotate-left').addEventListener('click', () => {
     if (player.isSnake) {
-        const directions = [{x: 0, y: 1}, {x: 1, y: 0}, {x: 0, y: -1}, {x: -1, y: 0}];
-        const idx = directions.findIndex(d => d.x === player.snake.dir.x && d.y === player.snake.dir.y);
-        player.snake.dir = directions[(idx + 3) % directions.length];
+        rotateSnake(3);
     } else {
         playerRotate();
     }
-});
-
-document.getElementById('up').addEventListener('click', () => {
-    // Do nothing for snake
 });
 
 document.getElementById('left').addEventListener('click', () => {
@@ -355,8 +369,6 @@ document.addEventListener('keydown', event => {
         document.getElementById('right').click();
     } else if (event.keyCode === 40) { // Down
         document.getElementById('down').click();
-    } else if (event.keyCode === 38) { // Up
-        document.getElementById('up').click();
     } else if (event.key === 'd' || event.key === 'D') {
         document.getElementById('rotate-left').click();
     } else if (event.key === 'f' || event.key === 'F') {
