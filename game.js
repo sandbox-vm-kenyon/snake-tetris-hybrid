@@ -341,6 +341,10 @@ document.addEventListener('keydown', event => {
         document.getElementById('down').click();
     } else if (event.keyCode === 38) { // Up
         document.getElementById('up').click();
+    } else if (event.key === 'd' || event.key === 'D') {
+        document.getElementById('rotate-left').click();
+    } else if (event.key === 'f' || event.key === 'F') {
+        document.getElementById('rotate-right').click();
     }
 });
 
