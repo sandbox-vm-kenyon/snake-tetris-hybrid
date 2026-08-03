@@ -429,6 +429,12 @@ function applyQueuedRotation() {
     player.snake.dir = next;
 }
 
+document.getElementById('up').addEventListener('click', () => {
+    if (player.isSnake) {
+        handleSnakeDirectionalInput(38);
+    }
+});
+
 document.getElementById('rotate-right').addEventListener('click', () => {
     if (player.isSnake) {
         rotateSnake(1);
