@@ -326,7 +326,11 @@ function update(time = 0) {
 // head a full 180 degrees into its own neck is rejected — that lets the player
 // rotate repeatedly without ever triggering a false self-collision game-over.
 function rotateSnake(step) {
-    const directions = [{x: 0, y: 1}, {x: 1, y: 0}, {x: 0, y: -1}, {x: -1, y: 0}];
+    // Ordered so that advancing by +1 turns the heading clockwise on screen
+    // (y grows downward): down -> left -> up -> right -> down. Stepping by +3
+    // (== -1) turns it counter-clockwise. This keeps rotate-right = clockwise
+    // and rotate-left = counter-clockwise, matching the button/key names.
+    const directions = [{x: 0, y: 1}, {x: -1, y: 0}, {x: 0, y: -1}, {x: 1, y: 0}];
     const idx = directions.findIndex(d => d.x === player.snake.dir.x && d.y === player.snake.dir.y);
     const next = directions[(idx + step) % directions.length];
     if (next.x === -player.snake.dir.x && next.y === -player.snake.dir.y) {
