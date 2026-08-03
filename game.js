@@ -295,39 +295,23 @@ document.getElementById('rotate-left').addEventListener('click', () => {
 });
 
 document.getElementById('up').addEventListener('click', () => {
-    if (player.isSnake) {
-        const directions = [{x: 0, y: 1}, {x: 1, y: 0}, {x: 0, y: -1}, {x: -1, y: 0}];
-        const idx = directions.findIndex(d => d.x === player.snake.dir.x && d.y === player.snake.dir.y);
-        player.snake.dir = directions[(idx + 2) % directions.length];
-    }
+    // Do nothing for snake
 });
 
 document.getElementById('left').addEventListener('click', () => {
-    if (player.isSnake) {
-        const directions = [{x: 0, y: 1}, {x: 1, y: 0}, {x: 0, y: -1}, {x: -1, y: 0}];
-        const idx = directions.findIndex(d => d.x === player.snake.dir.x && d.y === player.snake.dir.y);
-        player.snake.dir = directions[(idx + 3) % directions.length];
-    } else {
+    if (!player.isSnake) {
         playerMove(-1);
     }
 });
 
 document.getElementById('right').addEventListener('click', () => {
-    if (player.isSnake) {
-        const directions = [{x: 0, y: 1}, {x: 1, y: 0}, {x: 0, y: -1}, {x: -1, y: 0}];
-        const idx = directions.findIndex(d => d.x === player.snake.dir.x && d.y === player.snake.dir.y);
-        player.snake.dir = directions[(idx + 1) % directions.length];
-    } else {
+    if (!player.isSnake) {
         playerMove(1);
     }
 });
 
 document.getElementById('down').addEventListener('click', () => {
-    if (player.isSnake) {
-        const directions = [{x: 0, y: 1}, {x: 1, y: 0}, {x: 0, y: -1}, {x: -1, y: 0}];
-        const idx = directions.findIndex(d => d.x === player.snake.dir.x && d.y === player.snake.dir.y);
-        player.snake.dir = directions[(idx + 1) % directions.length];
-    } else if (!player.isSnake) {
+    if (!player.isSnake) {
         playerDrop();
     }
 });
