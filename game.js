@@ -515,13 +515,47 @@ document.getElementById('right').addEventListener('click', () => {
     }
 });
 
-document.getElementById('down').addEventListener('click', () => {
+let downButtonTimer = null;
+
+function startDownRepeat() {
     if (player.isSnake) {
         handleSnakeDirectionalInput(40);
     } else if (!player.isSnake && !player.isFallingSnake) {
         playerDrop();
     }
+    
+    // Set up the repeat interval
+    downButtonTimer = setInterval(() => {
+        if (player.isSnake) {
+            handleSnakeDirectionalInput(40);
+        } else if (!player.isSnake && !player.isFallingSnake) {
+            playerDrop();
+        }
+    }, 150); // Repeat every 150ms
+}
+
+function stopDownRepeat() {
+    if (downButtonTimer) {
+        clearInterval(downButtonTimer);
+        downButtonTimer = null;
+    }
+}
+
+document.getElementById('down').addEventListener('mousedown', (e) => {
+    e.preventDefault();
+    startDownRepeat();
 });
+
+document.getElementById('down').addEventListener('mouseup', stopDownRepeat);
+document.getElementById('down').addEventListener('mouseleave', stopDownRepeat);
+
+// Also support touch events for mobile
+document.getElementById('down').addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    startDownRepeat();
+});
+
+document.getElementById('down').addEventListener('touchend', stopDownRepeat);
 
 document.addEventListener('keydown', event => {
     if (event.keyCode === 37) { // Left
