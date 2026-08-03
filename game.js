@@ -17,25 +17,29 @@ function createMatrix(w, h) {
 
 function createPiece(type) {
     if (type === 'I') {
+        // 4-block straight
         return [
-            [0, 1, 0, 0],
-            [0, 1, 0, 0],
-            [0, 1, 0, 0],
-            [0, 1, 0, 0],
+            [0, 0, 0, 0],
+            [1, 1, 1, 1],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
         ];
     } else if (type === 'L') {
+        // Right-handed L
         return [
             [0, 0, 1],
-            [0, 0, 1],
             [1, 1, 1],
+            [0, 0, 0],
         ];
     } else if (type === 'J') {
+        // Left-handed J (mirror of L)
         return [
             [1, 0, 0],
-            [1, 0, 0],
             [1, 1, 1],
+            [0, 0, 0],
         ];
     } else if (type === 'O') {
+        // 4-block square
         return [
             [1, 1],
             [1, 1],
@@ -43,20 +47,21 @@ function createPiece(type) {
     } else if (type === 'Z') {
         return [
             [1, 1, 0],
-            [0, 1, 0],
             [0, 1, 1],
+            [0, 0, 0],
         ];
     } else if (type === 'S') {
         return [
             [0, 1, 1],
-            [0, 1, 0],
             [1, 1, 0],
+            [0, 0, 0],
         ];
     } else if (type === 'T') {
+        // 4-block T
         return [
             [0, 1, 0],
             [1, 1, 1],
-            [0, 1, 0],
+            [0, 0, 0],
         ];
     }
 }
