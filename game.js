@@ -181,7 +181,7 @@ function playerReset() {
 }
 
 function getRandomPiece() {
-    const pieces = 'TJSZLI';
+    const pieces = 'TJSZLI O';
     return createPiece(pieces[Math.floor(Math.random() * pieces.length)]);
 }
 
