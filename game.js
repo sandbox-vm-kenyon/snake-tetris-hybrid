@@ -1,8 +1,11 @@
 const canvas = document.getElementById('tetris');
 const context = canvas.getContext('2d');
+const nextCanvas = document.getElementById('next-piece');
+const nextContext = nextCanvas.getContext('2d');
 const scoreElement = document.getElementById('score');
 
 context.scale(20, 20);
+nextContext.scale(20, 20);
 
 function createMatrix(w, h) {
     const matrix = [];
@@ -153,13 +156,18 @@ function playerReset() {
     // A new piece is coming in — clear the uncontrollable falling-snake flag so
     // normal steering/rotation applies again to whatever spawns next.
     player.isFallingSnake = false;
+    
+    if (player.nextPiece === null) {
+        player.nextPiece = getRandomPiece();
+    }
+
     if (player.piecesSinceSnake >= player.snakeInterval) {
         spawnSnake();
         player.piecesSinceSnake = 0;
         player.snakeInterval = Math.floor(Math.random() * 3) + 3;
     } else {
-        const pieces = 'TJSZLI';
-        player.matrix = createPiece(pieces[Math.floor(Math.random() * pieces.length)]);
+        player.matrix = player.nextPiece;
+        player.nextPiece = getRandomPiece();
         player.pos.y = 0;
         player.pos.x = (arena[0].length / 2 | 0) - (player.matrix[0].length / 2 | 0);
         player.piecesSinceSnake++;
@@ -170,6 +178,11 @@ function playerReset() {
         player.score = 0;
         updateScore();
     }
+}
+
+function getRandomPiece() {
+    const pieces = 'TJSZLI';
+    return createPiece(pieces[Math.floor(Math.random() * pieces.length)]);
 }
 
 function spawnSnake() {
@@ -315,6 +328,31 @@ function draw() {
     } else {
         drawMatrix(player.matrix, player.pos);
     }
+
+    drawNextPiece();
+}
+
+function drawNextPiece() {
+    nextContext.fillStyle = '#000';
+    nextContext.fillRect(0, 0, nextCanvas.width, nextCanvas.height);
+    
+    if (player.nextPiece) {
+        const matrix = player.nextPiece;
+        const offsetX = (5 - matrix[0].length / 2) | 0;
+        const offsetY = (5 - matrix.length / 2) | 0;
+        drawMatrixNext(matrix, {x: offsetX, y: offsetY});
+    }
+}
+
+function drawMatrixNext(matrix, offset) {
+    matrix.forEach((row, y) => {
+        row.forEach((value, x) => {
+            if (value !== 0) {
+                nextContext.fillStyle = 'red';
+                nextContext.fillRect(x + offset.x, y + offset.y, 1, 1);
+            }
+        });
+    });
 }
 
 function drawMatrix(matrix, offset) {
@@ -333,6 +371,7 @@ const arena = createMatrix(12, 20);
 const player = {
     pos: {x: 0, y: 0},
     matrix: null,
+    nextPiece: null,
     score: 0,
     piecesSinceSnake: 0,
     snakeInterval: 3,

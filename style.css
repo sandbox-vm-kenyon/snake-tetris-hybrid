@@ -27,11 +27,38 @@ canvas {
     height: auto;
 }
 
+#game-layout {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 20px;
+}
+
+#side-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100px;
+}
+
 #score {
     position: relative;
     text-align: center;
     font-size: 20px;
     margin-bottom: 10px;
+}
+
+
+#next-piece-label {
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+#next-piece {
+    border: 2px solid #fff;
+    background-color: #000;
+    margin-bottom: 15px;
 }
 
 #controls {
