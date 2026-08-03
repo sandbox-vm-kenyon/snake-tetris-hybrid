@@ -9,6 +9,7 @@ body {
     min-height: 100vh;
     margin: 0;
     overflow: hidden;
+    touch-action: manipulation;
 }
 
 #game-container {
@@ -79,6 +80,8 @@ button {
     border: 1px solid #fff;
     border-radius: 10px;
     user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 button:active {
