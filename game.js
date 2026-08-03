@@ -133,6 +133,7 @@ function playerDrop() {
 }
 
 function playerMove(dir) {
+    if (player.isFallingSnake) return; // snake-become-piece is not steerable
     player.pos.x += dir;
     if (collide(arena, player)) {
         player.pos.x -= dir;
@@ -140,6 +141,7 @@ function playerMove(dir) {
 }
 
 function playerRotate() {
+    if (player.isFallingSnake) return; // snake-become-piece is not rotatable
     const oldMatrix = player.matrix;
     player.matrix = rotateMatrix(player.matrix);
     if (collide(arena, player)) {
@@ -148,6 +150,9 @@ function playerRotate() {
 }
 
 function playerReset() {
+    // A new piece is coming in — clear the uncontrollable falling-snake flag so
+    // normal steering/rotation applies again to whatever spawns next.
+    player.isFallingSnake = false;
     if (player.piecesSinceSnake >= player.snakeInterval) {
         spawnSnake();
         player.piecesSinceSnake = 0;
@@ -212,13 +217,29 @@ function updateSnake() {
 }
 
 function solidifySnake() {
-    player.isSnake = false;
-    player.snake.body.forEach(seg => {
-        if (seg.y >= 0 && seg.y < arena.length && seg.x >= 0 && seg.x < arena[0].length) {
-            arena[seg.y][seg.x] = 1;
-        }
+    // The snake stopping does NOT lock it in place. Instead its body is turned
+    // into a normal FALLING Tetris piece so it benefits from the usual gravity:
+    // it keeps dropping while there is empty space below and only locks once it
+    // actually rests on the floor or a landed block. The player must NOT be able
+    // to steer or rotate this piece, so it is flagged uncontrollable.
+    const body = player.snake.body;
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    body.forEach(seg => {
+        minX = Math.min(minX, seg.x); maxX = Math.max(maxX, seg.x);
+        minY = Math.min(minY, seg.y); maxY = Math.max(maxY, seg.y);
     });
-    playerReset();
+    const w = maxX - minX + 1;
+    const h = maxY - minY + 1;
+    const matrix = createMatrix(w, h);
+    body.forEach(seg => {
+        matrix[seg.y - minY][seg.x - minX] = 1;
+    });
+
+    player.isSnake = false;
+    player.snake = null;
+    player.matrix = matrix;
+    player.pos = {x: minX, y: minY};
+    player.isFallingSnake = true;
 }
 
 function gameOver() {
@@ -293,7 +314,8 @@ const player = {
     score: 0,
     piecesSinceSnake: 0,
     snakeInterval: 3,
-    isSnake: false
+    isSnake: false,
+    isFallingSnake: false
 };
 
 let dropCounter = 0;
@@ -368,7 +390,9 @@ document.getElementById('right').addEventListener('click', () => {
 });
 
 document.getElementById('down').addEventListener('click', () => {
-    if (!player.isSnake) {
+    // Not while a snake is being steered, and not for the uncontrollable
+    // snake-become-falling-piece (the player must not control its descent).
+    if (!player.isSnake && !player.isFallingSnake) {
         playerDrop();
     }
 });
