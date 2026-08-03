@@ -476,29 +476,36 @@ document.addEventListener('keydown', event => {
         if (player.isSnake) {
             handleSnakeDirectionalInput(event.keyCode);
         } else {
-            document.getElementById('left').click();
+            playerMove(-1);
         }
     } else if (event.keyCode === 39) { // Right
         if (player.isSnake) {
             handleSnakeDirectionalInput(event.keyCode);
         } else {
-            document.getElementById('right').click();
+            playerMove(1);
         }
     } else if (event.keyCode === 40) { // Down
         if (player.isSnake) {
             handleSnakeDirectionalInput(event.keyCode);
-        } else {
-            document.getElementById('down').click();
+        } else if (!player.isFallingSnake) {
+            playerDrop();
         }
     } else if (event.keyCode === 38) { // Up
         if (player.isSnake) {
             handleSnakeDirectionalInput(event.keyCode);
         }
-        // Non-snake Up arrow does nothing in this game.
     } else if (event.key === 'd' || event.key === 'D') {
-        document.getElementById('rotate-left').click();
+        if (player.isSnake) {
+            rotateSnake(3);
+        } else {
+            playerRotate();
+        }
     } else if (event.key === 'f' || event.key === 'F') {
-        document.getElementById('rotate-right').click();
+        if (player.isSnake) {
+            rotateSnake(1);
+        } else {
+            playerRotate();
+        }
     }
 });
 
