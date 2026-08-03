@@ -246,6 +246,18 @@ function gameOver() {
     arena.forEach(row => row.fill(0));
     player.score = 0;
     updateScore();
+
+    // Fully re-initialize the spawn state for a fresh game. The snake that just
+    // hit the wall left isSnake/snake set, so clear them; otherwise the reset
+    // piece would still be drawn/treated as a snake. Re-seed the snake counter
+    // so the very first piece after the reset is a normal Tetris block and the
+    // snake only returns on its usual 3-5-piece interval.
+    player.isSnake = false;
+    player.isFallingSnake = false;
+    player.snake = null;
+    player.piecesSinceSnake = 0;
+    player.snakeInterval = Math.floor(Math.random() * 3) + 3;
+
     playerReset();
 }
 
