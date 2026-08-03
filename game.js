@@ -181,6 +181,14 @@ function updateSnake() {
         return;
     }
 
+    // Check for self-collision
+    for (let i = 1; i < player.snake.body.length; i++) {
+        if (head.x === player.snake.body[i].x && head.y === player.snake.body[i].y) {
+            gameOver();
+            return;
+        }
+    }
+
     if (head.y >= arena.length || (arena[head.y] && arena[head.y][head.x] !== 0)) {
         solidifySnake();
         return;
