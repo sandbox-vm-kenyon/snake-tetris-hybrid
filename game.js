@@ -371,6 +371,33 @@ function update(time = 0) {
 // and rotate-left = counter-clockwise, matching the button/key names.
 const SNAKE_DIRECTIONS = [{x: 0, y: 1}, {x: -1, y: 0}, {x: 0, y: -1}, {x: 1, y: 0}];
 
+function handleSnakeDirectionalInput(keyCode) {
+    const dirMap = {
+        37: {x: -1, y: 0}, // Left
+        38: {x: 0, y: -1}, // Up
+        39: {x: 1, y: 0}, // Right
+        40: {x: 0, y: 1}, // Down
+    };
+    const newDir = dirMap[keyCode];
+    if (!newDir) return;
+
+    const currentDir = player.snake.dir;
+    // Ignore if same direction
+    if (newDir.x === currentDir.x && newDir.y === currentDir.y) return;
+    // Ignore if 180-degree reversal
+    if (newDir.x === -currentDir.x && newDir.y === -currentDir.y) return;
+
+    // Map the requested direction to a rotation step
+    const currentIdx = SNAKE_DIRECTIONS.findIndex(d => d.x === currentDir.x && d.y === currentDir.y);
+    const newIdx = SNAKE_DIRECTIONS.findIndex(d => d.x === newDir.x && d.y === newDir.y);
+    
+    let step = newIdx - currentIdx;
+    if (step < 0) step += 4;
+
+    rotateSnake(step);
+}
+
+
 // Enqueue a 90-degree turn command for the snake. `step` is +1 for clockwise
 // (right) and +3 (i.e. -1) for counter-clockwise (left). Rather than steering
 // the head immediately, the command is buffered and applied one-per-movement-
@@ -440,11 +467,28 @@ document.getElementById('down').addEventListener('click', () => {
 
 document.addEventListener('keydown', event => {
     if (event.keyCode === 37) { // Left
-        document.getElementById('left').click();
+        if (player.isSnake) {
+            handleSnakeDirectionalInput(event.keyCode);
+        } else {
+            document.getElementById('left').click();
+        }
     } else if (event.keyCode === 39) { // Right
-        document.getElementById('right').click();
+        if (player.isSnake) {
+            handleSnakeDirectionalInput(event.keyCode);
+        } else {
+            document.getElementById('right').click();
+        }
     } else if (event.keyCode === 40) { // Down
-        document.getElementById('down').click();
+        if (player.isSnake) {
+            handleSnakeDirectionalInput(event.keyCode);
+        } else {
+            document.getElementById('down').click();
+        }
+    } else if (event.keyCode === 38) { // Up
+        if (player.isSnake) {
+            handleSnakeDirectionalInput(event.keyCode);
+        }
+        // Non-snake Up arrow does nothing in this game.
     } else if (event.key === 'd' || event.key === 'D') {
         document.getElementById('rotate-left').click();
     } else if (event.key === 'f' || event.key === 'F') {
