@@ -280,6 +280,10 @@ function solidifySnake() {
     // it keeps dropping while there is empty space below and only locks once it
     // actually rests on the floor or a landed block. The player must NOT be able
     // to steer or rotate this piece, so it is flagged uncontrollable.
+    
+    // Clear any remaining food items from the board.
+    player.foods = null;
+
     const body = player.snake.body;
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
     body.forEach(seg => {
