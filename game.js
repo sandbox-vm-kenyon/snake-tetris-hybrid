@@ -170,7 +170,11 @@ function playerReset() {
     
     // 1. Determine what the CURRENT piece should be.
     // We use the state decided in the previous playerReset call (stored in nextPiece).
-    const currentPiece = player.nextPiece;
+    let currentPiece = player.nextPiece;
+
+    if (!currentPiece) {
+        currentPiece = getRandomPiece();
+    }
 
     if (currentPiece === 'SNAKE') {
         spawnSnake();
