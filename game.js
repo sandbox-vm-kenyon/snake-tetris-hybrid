@@ -460,7 +460,7 @@ function update(time = 0) {
             dropCounter = 0;
         }
     } else {
-        const currentInterval = player.isFallingSnake ? 150 : dropInterval;
+        const currentInterval = player.isFallingSnake ? 500 : dropInterval;
         dropCounter += deltaTime;
         if (dropCounter > currentInterval) {
             playerDrop();
