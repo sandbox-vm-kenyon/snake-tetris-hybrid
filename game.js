@@ -120,6 +120,17 @@ function arenaSweep() {
         arena.unshift(row.fill(0));
         ++rowCount;
     }
+    
+    if (rowCount > 0) {
+        player.linesCleared += rowCount;
+        if (player.linesCleared >= 10) {
+            const levelsGained = Math.floor(player.linesCleared / 10);
+            player.level += levelsGained;
+            player.linesCleared %= 10;
+            dropInterval *= Math.pow(0.85, levelsGained);
+        }
+    }
+    
     return rowCount;
 }
 
@@ -307,6 +318,9 @@ function solidifySnake() {
 function gameOver() {
     arena.forEach(row => row.fill(0));
     player.score = 0;
+    player.level = 1;
+    player.linesCleared = 0;
+    dropInterval = 1000;
     updateScore();
 
     // Fully re-initialize the spawn state for a fresh game. The snake that just
@@ -324,7 +338,7 @@ function gameOver() {
 }
 
 function updateScore() {
-    scoreElement.innerText = `Score: ${player.score}`;
+    scoreElement.innerText = `Score: ${player.score} | Level: ${player.level}`;
 }
 
 function draw() {
@@ -442,6 +456,8 @@ const player = {
     matrix: null,
     nextPiece: null,
     score: 0,
+    level: 1,
+    linesCleared: 0,
     piecesSinceSnake: 0,
     snakeInterval: 3,
     isSnake: false,
