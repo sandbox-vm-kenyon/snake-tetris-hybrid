@@ -290,6 +290,14 @@ function draw() {
     context.fillStyle = '#000';
     context.fillRect(0, 0, canvas.width, canvas.height);
 
+    if (player.food) {
+        context.fillStyle = 'yellow';
+        context.fillRect(player.food.x, player.food.y, 1, 1);
+        context.strokeStyle = 'black';
+        context.lineWidth = 0.1;
+        context.strokeRect(player.food.x, player.food.y, 1, 1);
+    }
+
     drawMatrix(arena, {x: 0, y: 0});
     
     if (player.isSnake) {
@@ -383,7 +391,8 @@ const player = {
     piecesSinceSnake: 0,
     snakeInterval: 3,
     isSnake: false,
-    isFallingSnake: false
+    isFallingSnake: false,
+    food: null
 };
 
 let dropCounter = 0;
