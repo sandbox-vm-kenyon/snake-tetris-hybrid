@@ -460,7 +460,7 @@ function update(time = 0) {
             dropCounter = 0;
         }
     } else {
-        const currentInterval = player.isFallingSnake ? 500 : dropInterval;
+        const currentInterval = (player.isFallingSnake || isDownPressed) ? 100 : (player.isFallingSnake ? 500 : dropInterval);
         dropCounter += deltaTime;
         if (dropCounter > currentInterval) {
             playerDrop();
@@ -574,9 +574,10 @@ document.getElementById('right').addEventListener('click', () => {
     }
 });
 
-let downButtonTimer = null;
+let isDownPressed = false;
 
 function startDownRepeat() {
+    isDownPressed = true;
     if (player.isSnake) {
         handleSnakeDirectionalInput(40);
     } else if (!player.isSnake && !player.isFallingSnake) {
@@ -594,6 +595,7 @@ function startDownRepeat() {
 }
 
 function stopDownRepeat() {
+    isDownPressed = false;
     if (downButtonTimer) {
         clearInterval(downButtonTimer);
         downButtonTimer = null;
