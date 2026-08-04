@@ -250,19 +250,8 @@ function updateSnake() {
         const foodIndex = player.foods.findIndex(f => f.x === head.x && f.y === head.y);
         if (foodIndex !== -1) {
             player.foods.splice(foodIndex, 1);
-            // Grow the snake: add the food segment (don't remove tail).
-            // This is handled by NOT slicing the body in the next step.
+            // Grow the snake by adding the head and keeping the tail.
             player.snake.body = [head, ...player.snake.body];
-            
-            // Optional: spawn a new piece of food immediately if none left? 
-            // The requirements don't specify, so we just remove it.
-            
-            // We must skip the usual body update for this tick to avoid double-adding head,
-            // or just let the growth happen. Since we already added head and kept all body,
-            // we can just return and let the next tick handle it, or continue.
-            // Actually, if we just did `player.snake.body = [head, ...player.snake.body]`,
-            // the snake has grown. We just need to make sure we don't do the normal 
-            // `player.snake.body = newBody` which would remove the tail.
             
             // Check for self-collision with the newly grown body.
             for (let i = 1; i < player.snake.body.length; i++) {
