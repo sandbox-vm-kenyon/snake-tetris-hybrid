@@ -570,6 +570,13 @@ function handleSnakeDirectionalInput(keyCode) {
 // turns around. The queue is capped so mashing can't build up a long backlog.
 function rotateSnake(step) {
     if (!player.isSnake || !player.snake) return;
+
+    // Drop sequential identical rotation commands from the queue
+    if (player.snake.rotationQueue.length > 0) {
+        const lastStep = player.snake.rotationQueue[player.snake.rotationQueue.length - 1];
+        if (lastStep === step) return;
+    }
+
     if (player.snake.rotationQueue.length < 3) {
         player.snake.rotationQueue.push(step);
     }
