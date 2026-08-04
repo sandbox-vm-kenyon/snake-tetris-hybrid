@@ -199,6 +199,20 @@ function spawnSnake() {
         rotationQueue: []
     };
     player.matrix = [[0]];
+
+    // Randomly spawn 0-3 food items.
+    const foodCount = Math.floor(Math.random() * 4);
+    player.foods = [];
+    for (let i = 0; i < foodCount; i++) {
+        let foodPos;
+        do {
+            foodPos = {
+                x: Math.floor(Math.random() * arena[0].length),
+                y: Math.floor(Math.random() * arena.length)
+            };
+        } while (arena[foodPos.y][foodPos.x] !== 0);
+        player.foods.push(foodPos);
+    }
 }
 
 function updateSnake() {
@@ -290,12 +304,14 @@ function draw() {
     context.fillStyle = '#000';
     context.fillRect(0, 0, canvas.width, canvas.height);
 
-    if (player.food) {
-        context.fillStyle = 'yellow';
-        context.fillRect(player.food.x, player.food.y, 1, 1);
-        context.strokeStyle = 'black';
-        context.lineWidth = 0.1;
-        context.strokeRect(player.food.x, player.food.y, 1, 1);
+    if (player.foods) {
+        player.foods.forEach(food => {
+            context.fillStyle = 'yellow';
+            context.fillRect(food.x, food.y, 1, 1);
+            context.strokeStyle = 'black';
+            context.lineWidth = 0.1;
+            context.strokeRect(food.x, food.y, 1, 1);
+        });
     }
 
     drawMatrix(arena, {x: 0, y: 0});
