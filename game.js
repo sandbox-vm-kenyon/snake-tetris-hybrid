@@ -168,20 +168,26 @@ function playerReset() {
     // normal steering/rotation applies again to whatever spawns next.
     player.isFallingSnake = false;
     
-    if (player.nextPiece === null) {
-        player.nextPiece = getRandomPiece();
-    }
+    // 1. Determine what the CURRENT piece should be.
+    // We use the state decided in the previous playerReset call (stored in nextPiece).
+    const currentPiece = player.nextPiece;
 
-    if (player.piecesSinceSnake >= player.snakeInterval) {
+    if (currentPiece === 'SNAKE') {
         spawnSnake();
-        player.piecesSinceSnake = 0;
-        player.snakeInterval = Math.floor(Math.random() * 3) + 3;
     } else {
-        player.matrix = player.nextPiece;
-        player.nextPiece = getRandomPiece();
+        player.matrix = currentPiece;
         player.pos.y = 0;
         player.pos.x = (arena[0].length / 2 | 0) - (player.matrix[0].length / 2 | 0);
         player.piecesSinceSnake++;
+    }
+
+    // 2. Decide what the NEXT piece will be.
+    if (player.piecesSinceSnake >= player.snakeInterval) {
+        player.nextPiece = 'SNAKE';
+        player.piecesSinceSnake = 0;
+        player.snakeInterval = Math.floor(Math.random() * 3) + 3;
+    } else {
+        player.nextPiece = getRandomPiece();
     }
 
     if (!player.isSnake && collide(arena, player)) {
@@ -403,13 +409,8 @@ function drawNextPiece() {
     nextContext.fillStyle = '#000';
     nextContext.fillRect(0, 0, nextCanvas.width, nextCanvas.height);
     
-    if (player.nextPiece) {
-        const matrix = player.nextPiece;
-        const offsetX = Math.floor((5 - matrix[0].length) / 2);
-        const offsetY = Math.floor((5 - matrix.length) / 2);
-        drawMatrixNext(matrix, {x: offsetX, y: offsetY});
-    } else if (player.piecesSinceSnake >= player.snakeInterval) {
-        // If the next piece is supposed to be a snake, draw a snake preview
+    if (player.nextPiece === 'SNAKE') {
+        // Draw a snake preview
         nextContext.fillStyle = 'green';
         const previewBody = [{x: 2, y: 2}, {x: 2, y: 3}, {x: 2, y: 4}];
         previewBody.forEach(seg => {
@@ -418,6 +419,11 @@ function drawNextPiece() {
             nextContext.lineWidth = 0.1;
             nextContext.strokeRect(seg.x, seg.y, 1, 1);
         });
+    } else if (player.nextPiece) {
+        const matrix = player.nextPiece;
+        const offsetX = Math.floor((5 - matrix[0].length) / 2);
+        const offsetY = Math.floor((5 - matrix.length) / 2);
+        drawMatrixNext(matrix, {x: offsetX, y: offsetY});
     }
 }
 
