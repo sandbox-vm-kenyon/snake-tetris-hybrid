@@ -244,6 +244,37 @@ function updateSnake() {
 
     // Self-collision no longer triggers game-over; it now solidifies the snake.
     const newBody = [head, ...player.snake.body.slice(0, player.snake.body.length - 1)];
+    
+    // Check if the head is consuming food.
+    if (player.foods) {
+        const foodIndex = player.foods.findIndex(f => f.x === head.x && f.y === head.y);
+        if (foodIndex !== -1) {
+            player.foods.splice(foodIndex, 1);
+            // Grow the snake: add the food segment (don't remove tail).
+            // This is handled by NOT slicing the body in the next step.
+            player.snake.body = [head, ...player.snake.body];
+            
+            // Optional: spawn a new piece of food immediately if none left? 
+            // The requirements don't specify, so we just remove it.
+            
+            // We must skip the usual body update for this tick to avoid double-adding head,
+            // or just let the growth happen. Since we already added head and kept all body,
+            // we can just return and let the next tick handle it, or continue.
+            // Actually, if we just did `player.snake.body = [head, ...player.snake.body]`,
+            // the snake has grown. We just need to make sure we don't do the normal 
+            // `player.snake.body = newBody` which would remove the tail.
+            
+            // Check for self-collision with the newly grown body.
+            for (let i = 1; i < player.snake.body.length; i++) {
+                if (head.x === player.snake.body[i].x && head.y === player.snake.body[i].y) {
+                    solidifySnake();
+                    return;
+                }
+            }
+            return;
+        }
+    }
+
     for (let i = 1; i < newBody.length; i++) {
         if (head.x === newBody[i].x && head.y === newBody[i].y) {
             solidifySnake();
