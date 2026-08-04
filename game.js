@@ -213,11 +213,11 @@ function spawnSnake() {
     player.snake = {
         body: [{x: 5, y: 2}, {x: 5, y: 1}, {x: 5, y: 0}],
         dir: {x: 0, y: 1},
-        // Buffered rotation commands. Rapid successive presses are enqueued here
-        // and applied at most one-per-movement-tick (see applyQueuedRotation),
+        // Buffered directional commands. Rapid successive presses are enqueued here
+        // and applied at most one-per-movement-tick (see applyQueuedInput),
         // so two quick turns make the snake actually turn around over successive
         // steps instead of flipping 180 degrees in place into a neck-snap death.
-        rotationQueue: []
+        inputQueue: []
     };
     player.matrix = [[0]];
 
@@ -242,10 +242,10 @@ function spawnSnake() {
 function updateSnake() {
     if (!player.isSnake) return;
 
-    // Consume at most one buffered rotation for this movement step, so rapid
+    // Consume at most one buffered input for this movement step, so rapid
     // successive presses turn the snake over successive ticks instead of
     // folding the head 180 degrees onto its neck in a single tick.
-    applyQueuedRotation();
+    applyQueuedInput();
 
     const head = {x: player.snake.body[0].x + player.snake.dir.x, y: player.snake.body[0].y + player.snake.dir.y};
 
@@ -545,25 +545,20 @@ function handleSnakeDirectionalInput(keyCode) {
 
     const currentDir = player.snake.dir;
     
-    // Map the requested direction to a rotation step
-    const currentIdx = SNAKE_DIRECTIONS.findIndex(d => d.x === currentDir.x && d.y === currentDir.y);
-    const newIdx = SNAKE_DIRECTIONS.findIndex(d => d.x === newDir.x && d.y === newDir.y);
-    
-    if (currentIdx === -1 || newIdx === -1) return;
+    // Ignore if the requested direction is the same as current direction
+    if (newDir.x === currentDir.x && newDir.y === currentDir.y) return;
 
-    let step = newIdx - currentIdx;
-    if (step < 0) step += 4;
-
-    if (step === 0) return; // Ignore if same direction
-
-    rotateSnake(step);
+    // Enqueue the requested direction
+    if (player.snake.inputQueue.length < 3) {
+        player.snake.inputQueue.push(newDir);
+    }
 }
 
 
 // Enqueue a 90-degree turn command for the snake. `step` is +1 for clockwise
 // (right) and +3 (i.e. -1) for counter-clockwise (left). Rather than steering
 // the head immediately, the command is buffered and applied one-per-movement-
-// tick by applyQueuedRotation. Traditional snake games buffer inputs this way:
+// tick by applyQueuedInput. Traditional snake games buffer inputs this way:
 // two very quick presses no longer collapse into a single-tick 180 flip (which
 // caused an instant self-reversal death); instead each press turns the head 90
 // degrees on a successive step, so the snake advances a cell and genuinely
@@ -571,14 +566,22 @@ function handleSnakeDirectionalInput(keyCode) {
 function rotateSnake(step) {
     if (!player.isSnake || !player.snake) return;
 
+    // Calculate what the resulting direction would be
+    const dir = player.snake.dir;
+    const idx = SNAKE_DIRECTIONS.findIndex(d => d.x === dir.x && d.y === dir.y);
+    const nextDir = SNAKE_DIRECTIONS[(idx + step) % SNAKE_DIRECTIONS.length];
+
+    // Ignore if the resulting direction is the same as current direction (though rotateSnake is usually called with step 1 or 3)
+    if (nextDir.x === dir.x && nextDir.y === dir.y) return;
+
     // Drop sequential identical rotation commands from the queue
-    if (player.snake.rotationQueue.length > 0) {
-        const lastStep = player.snake.rotationQueue[player.snake.rotationQueue.length - 1];
-        if (lastStep === step) return;
+    if (player.snake.inputQueue.length > 0) {
+        const lastDir = player.snake.inputQueue[player.snake.inputQueue.length - 1];
+        if (lastDir.x === nextDir.x && lastDir.y === nextDir.y) return;
     }
 
-    if (player.snake.rotationQueue.length < 3) {
-        player.snake.rotationQueue.push(step);
+    if (player.snake.inputQueue.length < 3) {
+        player.snake.inputQueue.push(nextDir);
     }
 }
 
@@ -586,16 +589,14 @@ function rotateSnake(step) {
 // that would flip the head a full 180 degrees directly opposite its current
 // facing is rejected (dropped from the queue) rather than causing an instant
 // neck-snap death — so the player can mash rotate without a false game-over.
-function applyQueuedRotation() {
-    if (player.snake.rotationQueue.length === 0) return;
-    const step = player.snake.rotationQueue.shift();
+function applyQueuedInput() {
+    if (player.snake.inputQueue.length === 0) return;
+    const nextDir = player.snake.inputQueue.shift();
     const dir = player.snake.dir;
-    const idx = SNAKE_DIRECTIONS.findIndex(d => d.x === dir.x && d.y === dir.y);
-    const next = SNAKE_DIRECTIONS[(idx + step) % SNAKE_DIRECTIONS.length];
-    if (next.x === -dir.x && next.y === -dir.y) {
+    if (nextDir.x === -dir.x && nextDir.y === -dir.y) {
         return; // reject a direct reversal (relative to the current facing)
     }
-    player.snake.dir = next;
+    player.snake.dir = nextDir;
 }
 
 document.getElementById('up').addEventListener('click', () => {
