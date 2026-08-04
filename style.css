@@ -55,6 +55,13 @@ canvas {
     order: 2;
 }
 
+#pc-instructions {
+    text-align: center;
+    font-size: 14px;
+    color: #aaa;
+    margin-bottom: 10px;
+}
+
 
 #next-piece-label {
     font-size: 16px;
