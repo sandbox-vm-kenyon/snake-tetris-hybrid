@@ -629,6 +629,7 @@ document.getElementById('right').addEventListener('click', () => {
     }
 });
 
+let downButtonTimer = null;
 let isDownPressed = false;
 
 function startDownRepeat() {
