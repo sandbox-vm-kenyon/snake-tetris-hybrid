@@ -499,7 +499,7 @@ function update(time = 0) {
         // If block speed is 400, then twice as fast is 200.
         // But it "does not accelerate until block speed matches 500".
         // So:
-        const snakeInterval = dropInterval < 500 ? dropInterval / 2 : 500;
+        const snakeInterval = dropInterval < 400 ? dropInterval / 2 : 400;
         if (dropCounter > snakeInterval) {
             updateSnake();
             dropCounter = 0;
