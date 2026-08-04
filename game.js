@@ -389,6 +389,16 @@ function drawNextPiece() {
         const offsetX = (5 - matrix[0].length / 2) | 0;
         const offsetY = (5 - matrix.length / 2) | 0;
         drawMatrixNext(matrix, {x: offsetX, y: offsetY});
+    } else if (player.piecesSinceSnake >= player.snakeInterval) {
+        // If the next piece is supposed to be a snake, draw a snake preview
+        nextContext.fillStyle = 'green';
+        const previewBody = [{x: 2, y: 2}, {x: 2, y: 3}, {x: 2, y: 4}];
+        previewBody.forEach(seg => {
+            nextContext.fillRect(seg.x, seg.y, 1, 1);
+            nextContext.strokeStyle = 'black';
+            nextContext.lineWidth = 0.1;
+            nextContext.strokeRect(seg.x, seg.y, 1, 1);
+        });
     }
 }
 
