@@ -362,8 +362,9 @@ function draw() {
                     x1 = seg.x + 0.1; y1 = seg.y + 0.1;
                     x2 = seg.x + 1 - 0.1 - eyeSize; y2 = seg.y + 0.1;
                 } else if (dir.x === 1 && dir.y === 0) {
-                    x1 = seg.x + 1 - 0.1; y1 = seg.y + 0.1;
-                    x2 = seg.x + 1 - 0.1; y2 = seg.y + 1 - 0.1 - eyeSize;
+                    // Moving right: eyes on the right (leading) edge.
+                    x1 = seg.x + 1 - 0.1 - eyeSize; y1 = seg.y + 0.1;
+                    x2 = seg.x + 1 - 0.1 - eyeSize; y2 = seg.y + 1 - 0.1 - eyeSize;
                 } else if (dir.x === -1 && dir.y === 0) {
                     x1 = seg.x + 0.1; y1 = seg.y + 0.1;
                     x2 = seg.x + 0.1; y2 = seg.y + 1 - 0.1 - eyeSize;
