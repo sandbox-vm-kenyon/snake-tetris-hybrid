@@ -455,7 +455,7 @@ function update(time = 0) {
 
     if (player.isSnake) {
         dropCounter += deltaTime;
-        if (dropCounter > 200) {
+        if (dropCounter > dropInterval) {
             updateSnake();
             dropCounter = 0;
         }
