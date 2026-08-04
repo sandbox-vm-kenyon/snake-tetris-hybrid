@@ -310,18 +310,18 @@ function draw() {
                 let x1, y1, x2, y2;
                 if (dir.x === 0 && dir.y === 1) {
                     // Moving down: eyes on the bottom (leading) edge.
-                    x1 = seg.x + eyeOffset; y1 = seg.y + 1 - eyeOffset;
-                    x2 = seg.x + 1 - eyeOffset; y2 = seg.y + 1 - eyeOffset;
+                    x1 = seg.x + 0.1; y1 = seg.y + 1 - 0.1 - eyeSize;
+                    x2 = seg.x + 1 - 0.1 - eyeSize; y2 = seg.y + 1 - 0.1 - eyeSize;
                 } else if (dir.x === 0 && dir.y === -1) {
                     // Moving up: eyes on the top (leading) edge.
-                    x1 = seg.x + eyeOffset; y1 = seg.y + eyeOffset;
-                    x2 = seg.x + 1 - eyeOffset; y2 = seg.y + eyeOffset;
+                    x1 = seg.x + 0.1; y1 = seg.y + 0.1;
+                    x2 = seg.x + 1 - 0.1 - eyeSize; y2 = seg.y + 0.1;
                 } else if (dir.x === 1 && dir.y === 0) {
-                    x1 = seg.x + 1 - eyeOffset; y1 = seg.y + eyeOffset;
-                    x2 = seg.x + 1 - eyeOffset; y2 = seg.y + 1 - eyeOffset;
+                    x1 = seg.x + 1 - 0.1; y1 = seg.y + 0.1;
+                    x2 = seg.x + 1 - 0.1; y2 = seg.y + 1 - 0.1 - eyeSize;
                 } else if (dir.x === -1 && dir.y === 0) {
-                    x1 = seg.x + eyeOffset; y1 = seg.y + eyeOffset;
-                    x2 = seg.x + eyeOffset; y2 = seg.y + 1 - eyeOffset;
+                    x1 = seg.x + 0.1; y1 = seg.y + 0.1;
+                    x2 = seg.x + 0.1; y2 = seg.y + 1 - 0.1 - eyeSize;
                 }
                 context.fillRect(x1, y1, eyeSize, eyeSize);
                 context.fillRect(x2, y2, eyeSize, eyeSize);
