@@ -386,8 +386,8 @@ function drawNextPiece() {
     
     if (player.nextPiece) {
         const matrix = player.nextPiece;
-        const offsetX = (5 - matrix[0].length / 2) | 0;
-        const offsetY = (5 - matrix.length / 2) | 0;
+        const offsetX = Math.floor((5 - matrix[0].length) / 2);
+        const offsetY = Math.floor((5 - matrix.length) / 2);
         drawMatrixNext(matrix, {x: offsetX, y: offsetY});
     } else if (player.piecesSinceSnake >= player.snakeInterval) {
         // If the next piece is supposed to be a snake, draw a snake preview
