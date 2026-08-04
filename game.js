@@ -211,9 +211,10 @@ function updateSnake() {
 
     const head = {x: player.snake.body[0].x + player.snake.dir.x, y: player.snake.body[0].y + player.snake.dir.y};
 
-    // Death ONLY on the three fatal conditions: side walls or the ceiling.
+    // Wall, ceiling, or self-collision no longer trigger game-over.
+    // Instead, they cause the snake to solidify into a falling piece.
     if (head.x < 0 || head.x >= arena[0].length || head.y < 0) {
-        gameOver();
+        solidifySnake();
         return;
     }
 
@@ -224,14 +225,11 @@ function updateSnake() {
         return;
     }
 
-    // Self-collision death is checked against the body the snake will actually
-    // occupy after the move (tail vacated). The immediate neck segment the head
-    // is leaving is excluded, so reversing/rotating the head direction multiple
-    // times in a row never triggers a false game-over.
+    // Self-collision no longer triggers game-over; it now solidifies the snake.
     const newBody = [head, ...player.snake.body.slice(0, player.snake.body.length - 1)];
     for (let i = 1; i < newBody.length; i++) {
         if (head.x === newBody[i].x && head.y === newBody[i].y) {
-            gameOver();
+            solidifySnake();
             return;
         }
     }
