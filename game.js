@@ -210,7 +210,10 @@ function spawnSnake() {
                 x: Math.floor(Math.random() * arena[0].length),
                 y: Math.floor(Math.random() * arena.length)
             };
-        } while (arena[foodPos.y][foodPos.x] !== 0);
+            const isOccupied = arena[foodPos.y][foodPos.x] !== 0 || 
+                              player.snake.body.some(seg => seg.x === foodPos.x && seg.y === foodPos.y);
+            if (!isOccupied) break;
+        } while (true);
         player.foods.push(foodPos);
     }
 }
