@@ -475,7 +475,32 @@ function update(time = 0) {
 
     if (player.isSnake) {
         dropCounter += deltaTime;
-        if (dropCounter > dropInterval) {
+        // Snake speed is clamped: it's twice the initial block speed (1000ms / 2 = 500ms),
+        // but it only accelerates (decreases dropInterval) once the current block
+        // speed (dropInterval) is faster than or equal to that initial snake speed.
+        const snakeSpeedLimit = 500;
+        const currentSnakeInterval = Math.max(dropInterval / 2, snakeSpeedLimit);
+        // Wait, the requirement is: "twice as fast as the starting block speed"
+        // Starting block speed is dropInterval = 1000. Twice as fast is 500ms.
+        // "ensure the snake's speed remains constant and does not accelerate 
+        // until the current block speed matches the snake's initial speed."
+        // Snake's initial speed is 500ms.
+        // So snake speed = max(500, dropInterval) ? No.
+        // If dropInterval is 1000, snake speed is 500.
+        // If dropInterval is 800, snake speed is 500.
+        // If dropInterval is 600, snake speed is 500.
+        // If dropInterval is 500, snake speed is 500.
+        // If dropInterval is 400, snake speed is 400 / 2 = 200? No, "does not accelerate until... matches"
+        // Let's re-read: "twice as fast as the starting block speed" (500ms).
+        // "does not accelerate until the current block speed matches the snake's initial speed" (500ms).
+        // This means for any dropInterval >= 500, snake interval is 500.
+        // For dropInterval < 500, snake interval = dropInterval / 2? Or does it just follow dropInterval?
+        // "twice as fast as the starting block speed" (500ms).
+        // If block speed is 400, then twice as fast is 200.
+        // But it "does not accelerate until block speed matches 500".
+        // So:
+        const snakeInterval = dropInterval < 500 ? dropInterval / 2 : 500;
+        if (dropCounter > snakeInterval) {
             updateSnake();
             dropCounter = 0;
         }
